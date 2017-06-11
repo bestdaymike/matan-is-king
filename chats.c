@@ -11,13 +11,23 @@
 #include <arpa/inet.h>
 #include <sys/time.h>
 
+#define MAX_CLIENTS 10
 
 //Global variables//
 in_port_t give_port = 12361;
 int shutdown_ = 0; //shutdown flag 
+msg_peer_t *clients[MAX_CLIENTS];
 
+//functions
 /*implementation of the servers thread*/
 void* thread_implem(void * socket); 
+/* Add client to list */
+void list_add(msg_peer_t *cl);
+
+
+
+
+
 
 int main(int argc, char** argv) {
 
@@ -88,7 +98,8 @@ while ((in_msg = recv(sock, (void*) &typ, sizeof(int), MSG_PEEK)) > 0) {
 	switch (typ) {
 
 	case MSG_UP: {
-		msg_peer_t new_peer;
+		/*client for */		
+		msg_peer_t *new_peer = (msg_peer_t *)malloc(sizeof(msg_peer_t));
 		recv(sock, (void*) &new_peer, sizeof(msg_peer_t), 0);
 	
 		/*server answer to client*/	
@@ -119,7 +130,15 @@ return 0;
 }
 
 
-
+void list_add(msg_peer_t *cl){
+int i;
+for(i=0; i < MAX_CLIENTS; i++){
+	if(!clients[i]){
+		clients[i] = cl;
+		return;
+	}
+}//end for
+}
 
 
 
